@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  Create a Lambda function.
+
+Parameters:
+  InputCodeBucketName:
+    Description: The source code bucket name. (required)
+    Type: String
+    MinLength: 1
+    MaxLength: 64
+  InputCodeKey:
+    Description: The source code key. Combined with the bucket name, the unique path to the source code. (required)
+    Type: String
+    MinLength: 1
+    MaxLength: 128
+  InputHandler:
+    Description: The function handler. (required)
+    Type: String
+    MinLength: 1
+    MaxLength: 128
+  InputRuntime:
+    Description: The function runtime. Defaults to nodejs8.10. (optional)
+    Type: String
+    AllowedValues:
+      - "nodejs8.10"
+      - "java8"
+      - "python2.7"
+      - "python3.6"
+      - "go1.x"
+      - "dotnetcore2.1"
+      - "dotnetcore2.0"
+    Default: "nodejs8.10"
+  InputLambdaExecutionRoleArn:
+    Description: The execution role ARN. (required)
+    Type: String
+    MinLength: 1
+    MaxLength: 128
+
+Resources:
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: !Ref InputHandler
+      Role: !Ref InputLambdaExecutionRoleArn
+      Code:
+        S3Bucket: !Ref InputCodeBucketName
+        S3Key: !Ref InputCodeKey
+        #S3ObjectVersion
+        #ZipFile
+      Runtime: !Ref InputRuntime
+      #DeadLetterConfig:
+      #Description:
+      #Environment:
+      #FunctionName:
+      #KmsKeyArn:
+      #MemorySize:
+      #ReservedConcurrentExecutions:
+      #Timeout:
+      #TracingConfig:
+      #VpcConfig:
+      #Tags: 
+
+Outputs:
+    LambdaFunctionName:
+        Value: !Ref LambdaFunction
+    LambdaFunctionArn:
+        Value: !GetAtt LambdaFunction.Arn
